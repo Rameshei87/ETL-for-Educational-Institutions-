@@ -1,0 +1,67 @@
+diff --git a/bin/file-source-loader b/bin/file-source-loader
+index c576631..17abcee 100755
+--- a/bin/file-source-loader
++++ b/bin/file-source-loader
+@@ -345,6 +345,54 @@ sub process_file_sinks {
+   }
+ }
+ 
++sub process_file_transforms {
++  my($file_source, $file) = @_;
++
++  # get the details of file transforms that are yet to be processed for this file
++  my $file_transforms = get_pending_file_transforms($file_source->{id}, $file->{id});
++
++#FIXME
++  for my $file_transform_id (sort keys %$file_sinks) {
++    my $file_sink = $file_sinks->{$file_sink_id};
++    my $src_path = get_archived_file_path($file_source, $file);
++#    my $dst_path = transform_filename($file_source, $file,
++#                                      $file_sink->{filename_transform});
++#
++#    # Remove the password component from the URL for display
++#    my $url = URI->new($file_sink->{url});
++#    if ($url->scheme eq "ftp") {
++#      $url->userinfo($url->user);
++#    }
++#    msg_file_source(
++#      $file_source,
++#      "uploading file '$src_path' to '$url/$dst_path'",
++#      LOG_INFO
++#    );
++#
++#    # connect to FTP server
++#    my $ftp = connect_ftp($file_source, $file_sink->{url});
++#
++#    if (!$options{test}) {
++#
++#      # upload file
++#      $ftp->put($src_path, $dst_path) or
++#        msg_file_source(
++#          $file_source,
++#          "FTP put of '$src_path' failed: " . $ftp->message,
++#          LOG_CRIT
++#        );
++#
++#      # mark this file_sink as done for this file
++#      $dbh->do('
++#        INSERT INTO file_sink_file_processed
++#               (file_sink_id, file_id)
++#        VALUES (?, ?);
++#      ', {}, $file_sink_id, $file->{id});
++#    }
++#
++  }
++}
++
+ sub mark_file_as_processed {
+   my($file_id) = @_;
+ 
+@@ -401,6 +449,7 @@ sub process_file {
+ 
+   process_file_sinks($file_source, $file);
+   process_virtual_ftp_file_sinks($file_source, $file);
++  process_file_transforms($file_source, $file);
+ 
+   # mark this file as processed
+   # if process_file_sinks() and process_virtual_ftp_file_sinks() return, all
